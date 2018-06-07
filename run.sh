@@ -1,6 +1,7 @@
 #!/bin/bash
+bash build-docker.sh
 STACK_NAME="backup"
-mkdir -p BACKUP
+mkdir -p BACKUPS
 docker stack rm ${STACK_NAME};
 sleep 5;
 docker stack deploy --compose-file=docker-compose.yml ${STACK_NAME};

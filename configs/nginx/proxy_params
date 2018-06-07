@@ -1,0 +1,47 @@
+
+add_header Cache-Control "no-store, no-cache, must-revalidate, max-age=0";
+proxy_hide_header "Pragma";
+add_header Pragma "no-cache";
+
+#add_header Last-Modified $sent_http_Expires;
+add_header X-ROOTCache $upstream_cache_status;
+
+proxy_ignore_headers "Expires" "Cache-Control" "Set-Cookie" "Vary";
+proxy_hide_header Cache-Control;
+proxy_hide_header ETag;
+
+#proxy_ignore_client_abort on;
+#proxy_cache_key "$request_method|$host|$request_uri|$request_body";
+#proxy_cache USESS;
+#proxy_cache_bypass $skip_cache;
+#proxy_no_cache $skip_cache;
+#proxy_cache_use_stale       error timeout invalid_header http_502;
+#proxy_cache_valid all       0;
+#proxy_cache_valid 200       6h;
+#proxy_cache_min_uses        1;
+
+#proxy_cache_methods GET; 
+
+#proxy_redirect     off;
+
+proxy_set_header   Host                         $host;
+proxy_set_header   X-Real-IP                    $remote_addr;
+proxy_set_header   X-Forwarded-For              $proxy_add_x_forwarded_for;
+
+
+client_max_body_size       10m;
+client_body_buffer_size    128k;
+
+proxy_connect_timeout      90;
+proxy_send_timeout         90;
+proxy_read_timeout         90;
+
+proxy_buffer_size          4k;
+proxy_buffers              4 32k;
+proxy_busy_buffers_size    64k;
+proxy_temp_file_write_size 64k;
+
+proxy_next_upstream error   timeout invalid_header http_500 http_503 http_502 http_504;
+proxy_next_upstream_timeout 1;
+proxy_next_upstream_tries   4;
+

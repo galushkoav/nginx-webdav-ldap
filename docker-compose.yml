@@ -1,0 +1,47 @@
+#docker stack deploy --compose-file=docker-compose.yml backup
+---
+version: '3.5'
+services:
+  nginx:
+    image: nginx-webdav-alpine:latest
+    hostname: nginx
+    volumes:
+       - "./configs/nginx:/etc/nginx"
+       - "./BACKUPS:/docker-compose/backups.itc-life.ru/www"
+    ports:
+      - target: 80
+        published: 280
+        protocol: tcp
+        mode: host
+    environment:
+      - "TZ=Asia/Yekaterinburg" 
+    networks:
+      asujs-network:
+        aliases:
+          - nginx.local
+    extra_hosts:
+      - "syslogng-server:192.168.0.100"
+    deploy:
+          replicas: 1
+          resources:
+            limits:
+              cpus: '1'
+              memory: 384MB
+          restart_policy:
+            condition: on-failure
+            delay: 5s
+            max_attempts: 3
+            window: 120s
+          update_config:
+            parallelism: 1
+            delay: 10s
+            failure_action: continue
+            monitor: 10s
+            max_failure_ratio: 0.3
+          placement:
+            constraints: [node.role == manager]
+
+
+networks:
+  asujs-network:
+    driver: overlay
